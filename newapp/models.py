@@ -43,11 +43,16 @@ class Post(models.Model):
 # Класс Категория сообщения
 class PostCategory(models.Model):
     postThrough = models.ForeignKey(Post, on_delete=models.CASCADE)
-    categoryThrough = models.ForeignKey(Post, on_delete=models.CASCADE)
+    categoryThrough = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 # Класс Комментарий
 class Comment(models.Model):
+    commentPost = models.ForeignKey(Post, on_delete=models.CASCADE)
+    commentUser = models.ForeignKey(User, on_delete=models.CASCADE)  # даём возможность комментировать пользователю
+    text = models.TextField()
+    dateCreation = models.DateTimeField(auto_now_add=True)
+    rating = models.SmallIntegerField(default=0)
 
     def like(self):
         pass
