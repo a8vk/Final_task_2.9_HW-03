@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 
 # Класс Автор
@@ -8,7 +9,16 @@ class Author(models.Model):
     ratingAuthor = models.SmallIntegerField(default=0)  # поле рейтинг автора
 
     def update_rating(self):  # метод обновление рейтинга
-        pass
+        post_rat = self.post_set.aggregate(postRating=Sum('rating'))
+        p_rat = 0
+        p_rat += post_rat.get('postRating')
+
+        comment_rat = self.authorUser.comment_set.aggregate(commentRating=Sum('rating'))
+        c_rat = 0
+        c_rat += comment_rat.get('commentRating')
+
+        self.ratingAuthor = p_rat * 3 + c_rat
+        self.save()
 
 
 # Класс Категория
@@ -34,10 +44,15 @@ class Post(models.Model):
     rating = models.SmallIntegerField(default=0)
 
     def like(self):
-        pass
+        self.rating += 1
+        self.save()
 
     def dislike(self):
-        pass
+        self.rating -= 1
+        self.save()
+
+    def preview(self):
+        return '{}...{}'.format(self.text[0:123], str(self.rating))
 
 
 # Класс Категория сообщения
@@ -55,7 +70,9 @@ class Comment(models.Model):
     rating = models.SmallIntegerField(default=0)
 
     def like(self):
-        pass
+        self.rating += 1
+        self.save()
 
     def dislike(self):
-        pass
+        self.rating -= 1
+        self.save()
