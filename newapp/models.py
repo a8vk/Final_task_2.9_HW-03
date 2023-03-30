@@ -52,7 +52,7 @@ class Post(models.Model):
         self.save()
 
     def preview(self):
-        return '{}...{}'.format(self.text[0:123], str(self.rating))
+        return '{}...{}'.format(self.text[:123], str(self.rating))
 
 
 # Класс Категория сообщения
